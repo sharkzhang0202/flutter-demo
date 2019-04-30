@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import '../routers/application.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
@@ -111,7 +112,13 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
               );
             } else {
               return Center(
-                child: Text('加载中......'),
+                // child: Text('加载中......'),
+                child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SpinKitPouringHourglass(color: Colors.deepOrangeAccent),
+              ],
+            ),
               );
             }
           },

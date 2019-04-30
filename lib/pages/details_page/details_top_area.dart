@@ -15,7 +15,8 @@ class DetailsTopArea extends StatelessWidget {
           child: Column(
             children: <Widget>[
               _goodsImage(goodsInfo.image1),
-              _goodsName(goodsInfo.goodsName)
+              _goodsName(goodsInfo.goodsName),
+              _goodsNum(goodsInfo.goodsSerialNumber)
             ],
           ),
         );
@@ -50,4 +51,20 @@ class DetailsTopArea extends StatelessWidget {
       );
   }
 
+  // 编号方法
+
+  Widget _goodsNum(num){
+    return  Container(
+      width: ScreenUtil().setWidth(730),
+      padding: EdgeInsets.only(left:15.0),
+      margin: EdgeInsets.only(top:8.0),
+      child: Text(
+        '编号:${num}',
+        style: TextStyle(
+          color: Colors.black26
+        ),
+      ),
+      
+    );
+  }
 }
