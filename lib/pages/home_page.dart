@@ -114,8 +114,8 @@ class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin 
               return Center(
                 // child: Text('加载中......'),
                 child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
                 SpinKitPouringHourglass(color: Colors.deepOrangeAccent),
               ],
             ),
