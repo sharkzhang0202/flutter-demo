@@ -34,7 +34,7 @@ class CartItem extends StatelessWidget {
     return Container(
       child: Checkbox(
         value: true,
-        activeColor:Colors.pink,
+        activeColor:Colors.deepOrangeAccent,
         onChanged: (bool val){},
       ),
     );
