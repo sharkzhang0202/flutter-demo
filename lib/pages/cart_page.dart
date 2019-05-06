@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:flutter/foundation.dart';
 import 'package:provide/provide.dart';
 import '../provide/cart.dart';
 import './cart_page/cart_item.dart';
@@ -27,7 +28,30 @@ class CartPage extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: cartList.length,
                         itemBuilder: (context,index){
-                          return CartItem(cartList[index]);
+                          final item = cartList[index].goodsId;
+                          return Dismissible(
+                            background: Container(
+                              color: Colors.black54,
+                              alignment: Alignment.centerRight,
+                              child: Icon(Icons.delete_forever),
+                            ),
+                            
+                            movementDuration: Duration(seconds: 2),
+                            dismissThresholds: Map(),
+                            key: Key(item),
+                            direction: DismissDirection.endToStart,
+                            
+                            onDismissed: (direction) {
+                              // Remove the item from our data source.
+                              Provide.value<CartProvide>(context).deleteOneGoods(item);
+
+                              // Then show a snackbar!
+                              Scaffold.of(context)
+                                  .showSnackBar(SnackBar(content: Text("$item dismissed")));
+                            },
+                            child:  CartItem(cartList[index]),
+                          );
+                         
                         },
                       ),
                     );
