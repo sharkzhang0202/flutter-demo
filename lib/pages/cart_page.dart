@@ -33,8 +33,6 @@ class CartPage extends StatelessWidget {
                     );
                   },
                 ),
-
-                
                 Positioned(
                   bottom: -5,
                   left: 0,

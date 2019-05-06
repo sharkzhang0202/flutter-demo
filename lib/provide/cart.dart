@@ -6,6 +6,12 @@ import '../model/cartInfo.dart';
 class CartProvide with ChangeNotifier {
   String cartString = '[]';
   List<CartInfoModel> cartList = [];
+  // 总价钱
+  double allPrice = 0;
+  // 总数量
+  int allGoodsCount = 0;
+  //是否全选
+  bool isAllCheck= true; 
 
   // 添加购物车
   save(goodsId, goodsName, count, price, images) async {
@@ -20,7 +26,6 @@ class CartProvide with ChangeNotifier {
     //声明变量，用于判断购物车中是否已经存在此商品ID
     var isHave = false; //默认为没有
     var ival = 0; //用于进行循环的索引使用
-
     tempList.forEach((item){
       if (item['goodsId'] == goodsId) {
         tempList[ival]['count'] = item['count'] + 1;
@@ -63,12 +68,22 @@ class CartProvide with ChangeNotifier {
   getCartInfo() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     cartString = prefs.getString('cartInfo');
+    // 初始化基础数据
     cartList = [];
+    allPrice = 0;
+    allGoodsCount = 0;
+    isAllCheck = true;
     if(cartString == null) {
       cartList = [];
     }else{
       List<Map> tempList = (json.decode(cartString.toString()) as List ).cast();
       tempList.forEach((item){
+        if (item['isCheck']) {
+          allPrice += item['count'] * item['price'];
+          allGoodsCount += item['count'];
+        } else {
+          isAllCheck = false;
+        }
         cartList.add(CartInfoModel.fromJson(item));
       });
     }
@@ -91,6 +106,74 @@ class CartProvide with ChangeNotifier {
     });
 
     tempList.removeAt(delIndex);
+    cartString = json.encode(tempList).toString();
+    prefs.setString('cartInfo', cartString);
+    await getCartInfo();
+  }
+
+  // 单选方法
+  changeCheckState(CartInfoModel cartItem) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    cartString = prefs.getString('cartInfo');
+    List<Map> tempList = (json.decode(cartString.toString()) as List).cast();
+    var tempIndex = 0;
+    var changeIndex = 0;
+    tempList.forEach((item){
+      if (item['goodsId'] == cartItem.goodsId) {
+        changeIndex = tempIndex;
+      }
+
+      tempIndex++;
+    });
+    tempList[changeIndex] = cartItem.toJson();
+    cartString = json.encode(tempList).toString();
+    prefs.setString('cartInfo', cartString);
+    await getCartInfo();
+  }
+
+  // 点击全选按钮操作
+
+  changeAllCheckBtnState(bool isCheck) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    cartString = prefs.getString('cartInfo');
+    List<Map> tempList = (json.decode(cartString.toString()) as List).cast();
+    List<Map> newList = [];
+    tempList.forEach((item){
+      var newItem = item;
+      item['isCheck'] = isCheck;
+      newList.add(newItem);
+    });
+    cartString = json.encode(newList).toString();
+    prefs.setString('cartInfo', cartString);
+    await getCartInfo();
+  }
+
+  // 商品数量加减
+  addOrReduceAction(var cartItem, String todo) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    cartString = prefs.getString('cartInfo');
+    List<Map> tempList = (json.decode(cartString.toString()) as List).cast();
+
+    // 找出需要修改数量的索引值
+
+    int tempIndex = 0;
+    int changeIndex = 0;
+    tempList.forEach((item){
+      if (cartItem.goodsId == item['goodsId']) {
+        changeIndex = tempIndex;
+      }
+      tempIndex++;
+    });
+
+    // 判断是加法还是减法以及当前数量为零时减号按钮失效
+
+    if (todo == 'add') {
+      cartItem.count++;
+    } else if (cartItem.count > 1) {
+      cartItem.count--;
+    }
+
+    tempList[changeIndex] = cartItem.toJson();
     cartString = json.encode(tempList).toString();
     prefs.setString('cartInfo', cartString);
     await getCartInfo();
